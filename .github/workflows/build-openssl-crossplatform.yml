@@ -6,6 +6,16 @@ env:
   QEMU_IMAGE: tonistiigi/binfmt:qemu-v5.0.1
 
 jobs:
+
+  release_name:
+    runs-on: ubuntu-latest
+    outputs:
+      release_name: ${{ steps.step1.outputs.release_name }}
+    steps:
+      - id: step1
+        run: echo "release_name=$(date +'%Y%m%d%H%M%S')" >> "$GITHUB_OUTPUT"
+
+
   #
   # build the different platforms using QEMU
   #
@@ -86,9 +96,13 @@ jobs:
 
   release:
     runs-on: ubuntu-latest
-    needs: openssl
+    needs:
+      - release_name
+      - openssl
     permissions:
       contents: write
+    env:
+      RELEASE_NAME: ${{needs.release_name.outputs.release_name}}
     steps:
 
       -
@@ -107,11 +121,8 @@ jobs:
           ls -alR openssl
           mkdir release
           for f in openssl/*/*.tar.gz; do mv $f release; done
-          export RELEASE_FILES=$(ls release/*.tar.gz)
-          export RELEASE_NAME=$(date +'%Y%m%d%H%M%S')
-          export RELEASE_TAG=v$RELEASE_NAME
-          git tag $RELEASE_TAG
-          git push origin $RELEASE_TAG
+          git tag v$RELEASE_NAME
+          git push origin v$RELEASE_NAME
 
       -
         name: Release
@@ -119,7 +130,7 @@ jobs:
         with:
           draft: false
           files: ${{ env.RELEASE_FILES }}
-          tag_name: ${{ env.RELEASE_TAG }}
+          tag_name: v${{ env.RELEASE_NAME }}
           name: ${{ env.RELEASE_NAME }}
           body: |
             OpenSSL 3.0.8 and 3.2.1
