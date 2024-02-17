@@ -108,6 +108,6 @@ jobs:
         with:
           files: ${{ env.RELEASE_FILES }}
           tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
+          name: ${{ github.ref }}
           body: |
             OpenSSL 3.0.8 and 3.2.1
