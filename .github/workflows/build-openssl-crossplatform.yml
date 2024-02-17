@@ -125,11 +125,20 @@ jobs:
           git push origin v$RELEASE_NAME
 
       -
+        name: List release files
+        id: release-files
+        run: |
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "files<<$EOF" >> "$GITHUB_OUTPUT"
+          ls release/* >> "$GITHUB_OUTPUT"
+          echo "$EOF" >> "$GITHUB_OUTPUT"
+
+      -
         name: Release
         uses: softprops/action-gh-release@v1
         with:
           draft: false
-          files: ${{ env.RELEASE_FILES }}
+          files: ${{ steps.release-files.outputs.files }}
           tag_name: v${{ env.RELEASE_NAME }}
           name: ${{ env.RELEASE_NAME }}
           body: |
