@@ -92,15 +92,14 @@ jobs:
     steps:
 
       -
+        name: Checkout
+        uses: actions/checkout@v4
+
+      -
         uses: actions/download-artifact@v4
         with:
           pattern: openssl-*
           path: openssl
-
-      -
-        name: Checkout
-        uses: actions/checkout@v4
-
 
       -
         name: Show the tars
