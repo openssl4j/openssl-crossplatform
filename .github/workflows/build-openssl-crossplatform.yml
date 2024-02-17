@@ -35,8 +35,9 @@ jobs:
             tag: linux_amd64
           - platform: linux/arm64
             tag: linux_arm64
-          - platform: linux/riscv64
-            tag: linux_riscv64
+          # No Debian 11 - https://9to5linux.com/debian-gnu-linux-is-now-officially-supported-on-the-risc-v-architecture
+          #- platform: linux/riscv64
+          #  tag: linux_riscv64
           - platform: linux/ppc64le
             tag: linux_ppc64le
           - platform: linux/s390x
