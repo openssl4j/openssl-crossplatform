@@ -44,8 +44,8 @@ jobs:
             tag: linux_s390x
           - platform: linux/386
             tag: linux_386
-          - platform: linux/mips64le
-            tag: linux_mips64le
+          #- platform: linux/mips64le
+          #  tag: linux_mips64le
           #- platform: linux/mips64
           #  tag: linux_mips64
           - platform: linux/arm/v7
