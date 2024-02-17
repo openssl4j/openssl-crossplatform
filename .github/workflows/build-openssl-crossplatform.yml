@@ -1,0 +1,86 @@
+name: Cross-Platform OpenSSL C Build
+
+on: push
+
+env:
+  QEMU_IMAGE: tonistiigi/binfmt:qemu-v5.0.1
+
+jobs:
+  #
+  # build the different platforms using QEMU
+  #
+  openssl:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      matrix:
+        openssl: 
+          - version: '3.0.8'
+            opts: enable-fips
+            name: fips
+          - version: '3.2.1'
+            opts:
+            name: plain
+        os:
+          - platform: linux/amd64
+            tag: linux_amd64
+          - platform: linux/arm64
+            tag: linux_arm64
+          - platform: linux/s390x
+            tag: linux_s390x
+          - platform: linux/arm/v7
+            tag: linux_arm_v7
+          - platform: linux/arm/v6
+            tag: linux_arm_v6
+          - platform: linux/ppc64le
+            tag: linux_ppc64le
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v4
+      -
+        name: Set up QEMU for ${{ matrix.os.platform }}
+        id: qemu
+        uses: docker/setup-qemu-action@v3
+        with:
+          image: ${{ env.QEMU_IMAGE }}
+          platforms: ${{ matrix.os.platform }}
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      -
+        name: Build on ${{ matrix.os.platform }}, version ${{ matrix.openssl.version}}, mode ${{ matrix.openssl.name }}
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile
+          platforms: ${{ matrix.os.platform }}
+          build-args: |
+            "OPENSSL_VERSION=${{ matrix.openssl.version }}"
+            "OPENSSL_CONFIGOPTS=${{ matrix.openssl.opts }}"
+          outputs: "type=tar,dest=image.tar"
+
+      -
+        name: Show the docker image
+        run: |
+          ls -alR image.tar
+          tar -tvf image.tar
+
+      -
+        name: Extract openssl build from container
+        run: |
+          tar -xvf image.tar openssl.tar.gz && tar -xzvf openssl.tar.gz
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: openssl-${{ matrix.os.tag }}-${{ matrix.openssl.version }}-${{ matrix.openssl.name }}
+          path: openssl
