@@ -98,6 +98,11 @@ jobs:
           path: openssl
 
       -
+        name: Checkout
+        uses: actions/checkout@v4
+
+
+      -
         name: Show the tars
         run: |
           ls -alR openssl
@@ -106,14 +111,8 @@ jobs:
           export RELEASE_FILES=$(ls release/*.tar.gz)
           export RELEASE_NAME=$(date +'%Y%m%d%H%M%S')
           export RELEASE_TAG=v$RELEASE_NAME
-
-      -
-        name: Create git tag
-        run: |
-          git tag {{ env.RELEASE_TAG }}
-      -
-        name: Push git tag
-        run: git push origin {{ env.RELEASE_TAG }}
+          git tag $RELEASE_TAG
+          git push origin $RELEASE_TAG
 
       -
         name: Release
