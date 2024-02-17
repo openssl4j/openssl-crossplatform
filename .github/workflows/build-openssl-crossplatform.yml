@@ -112,7 +112,7 @@ jobs:
         run: |
           git tag {{ env.RELEASE_TAG }}
       -
-       name: Push git tag
+        name: Push git tag
         run: git push origin {{ env.RELEASE_TAG }}
 
       -
