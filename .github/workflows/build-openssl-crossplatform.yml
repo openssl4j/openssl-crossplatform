@@ -46,8 +46,8 @@ jobs:
             tag: linux_386
           - platform: linux/mips64le
             tag: linux_mips64le
-          - platform: linux/mips64
-            tag: linux_mips64
+          #- platform: linux/mips64
+          #  tag: linux_mips64
           - platform: linux/arm/v7
             tag: linux_arm_v7
           - platform: linux/arm/v6
