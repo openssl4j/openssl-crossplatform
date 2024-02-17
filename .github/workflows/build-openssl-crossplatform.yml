@@ -35,8 +35,16 @@ jobs:
             tag: linux_amd64
           - platform: linux/arm64
             tag: linux_arm64
+          - platform: linux/riscv64
+            tag: linux_riscv64
           - platform: linux/s390x
             tag: linux_s390x
+          - platform: linux/386
+            tag: linux_386
+          - platform: linux/mips64le
+            tag: linux_mips64le
+          - platform: linux/mips64
+            tag: linux_mips64
           - platform: linux/arm/v7
             tag: linux_arm_v7
           - platform: linux/arm/v6
