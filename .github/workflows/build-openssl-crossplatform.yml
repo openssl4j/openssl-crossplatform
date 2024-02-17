@@ -3,7 +3,7 @@ name: Cross-Platform OpenSSL C Build
 on: push
 
 env:
-  QEMU_IMAGE: tonistiigi/binfmt:qemu-v5.0.1
+  QEMU_IMAGE: tonistiigi/binfmt:qemu-v6.2.0
 
 jobs:
 
@@ -37,6 +37,8 @@ jobs:
             tag: linux_arm64
           - platform: linux/riscv64
             tag: linux_riscv64
+          - platform: linux/ppc64le
+            tag: linux_ppc64le
           - platform: linux/s390x
             tag: linux_s390x
           - platform: linux/386
@@ -49,8 +51,6 @@ jobs:
             tag: linux_arm_v7
           - platform: linux/arm/v6
             tag: linux_arm_v6
-          - platform: linux/ppc64le
-            tag: linux_ppc64le
     steps:
       -
         name: Checkout
