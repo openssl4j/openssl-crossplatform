@@ -108,12 +108,12 @@ jobs:
           export RELEASE_TAG=v$RELEASE_NAME
 
       -
-        uses: rickstaa/action-create-tag@v1
-        id: "tag_create"
-        with:
-          tag_exists_error: false
-          message: "Latest release"
-          tag: "${{ env.RELEASE_TAG }}"
+        name: Bump version and push tag
+        if: ${{ github.event_name == 'push' }}
+        uses: anothrNick/github-tag-action@1.26.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: true
 
       -
         name: Release
