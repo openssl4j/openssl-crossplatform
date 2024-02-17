@@ -104,12 +104,14 @@ jobs:
           mkdir release
           for f in openssl/*/*.tar.gz; do mv $f release; done
           export RELEASE_FILES=$(ls release/*.tar.gz)
+          export RELEASE_NAME=$(date +'%Y%m%d%H%M%S')
 
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
+          draft: false
           files: ${{ env.RELEASE_FILES }}
-          tag_name: ${{ github.ref }}
-          name: ${{ github.ref }}
+          tag_name: ${{ env.RELEASE_NAME }}
+          name: ${{ env.RELEASE_NAME }}
           body: |
             OpenSSL 3.0.8 and 3.2.1
