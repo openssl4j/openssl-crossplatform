@@ -15,11 +15,49 @@ jobs:
       - id: step1
         run: echo "release_name=$(date +'%Y%m%d%H%M%S')" >> "$GITHUB_OUTPUT"
 
+  #
+  # build the MacOS version
+  #
+  openssl-macos:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        openssl:
+          - version: '3.0.8'
+            opts: enable-fips
+            name: fips
+          - version: '3.2.1'
+            opts:
+            name: plain
+        os:
+          - platform: macos/amd64
+            tag: macos_amd64
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v4
+
+      -
+        name: Download openssl ${{ matrix.openssl.version }}
+        run: |
+              BUILD=/build
+              INSTALL=/openssl
+              mkdir -p $BUILD && \
+              wget "https://github.com/openssl/openssl/releases/download/openssl-${{ matrix.openssl.version }}/openssl-${{ matrix.openssl.version }}.tar.gz" -O- | \
+              tar -C $BUILD --strip-components=1 -xzf -
+              (cd $BUILD && ./Configure --prefix=$INSTALL $OPENSSL_CONFIGOPTS && make && make install)
+              tar -czvf openssl.tar.gz $INSTALL && rm -fr $INSTALL $BUILD
+
+      -
+        uses: actions/upload-artifact@v4
+        with:
+          name: openssl-${{ matrix.os.tag }}-${{ matrix.openssl.version }}-${{ matrix.openssl.name }}
+          path: openssl-${{ matrix.os.tag }}-${{ matrix.openssl.version }}-${{ matrix.openssl.name }}.tar.gz
 
   #
   # build the different platforms using QEMU
   #
-  openssl:
+  openssl-linux:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -107,7 +145,8 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - release_name
-      - openssl
+      - openssl-macos
+      - openssl-linux
     permissions:
       contents: write
     env:
