@@ -40,8 +40,8 @@ jobs:
       -
         name: Download openssl ${{ matrix.openssl.version }}
         run: |
-              BUILD=/build
-              INSTALL=/openssl
+              BUILD=build
+              INSTALL=openssl
               mkdir -p $BUILD && \
               wget "https://github.com/openssl/openssl/releases/download/openssl-${{ matrix.openssl.version }}/openssl-${{ matrix.openssl.version }}.tar.gz" -O- | \
               tar -C $BUILD --strip-components=1 -xzf -
